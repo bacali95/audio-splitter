@@ -1,0 +1,141 @@
+/*
+ * Design tokens: shadcn "Mira" style, "neutral" theme, Inter.
+ * Colours are copied verbatim from the neutral theme. Dark applies under prefers-color-scheme
+ * and can be forced either way with <html data-theme="dark|light">.
+ * The `--ui-*` block maps @ui-sdk's variables onto these tokens so every SDK part follows the theme.
+ */
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
+
+  /* Not part of the neutral theme: status colours the app needs (overlap warning, success state). */
+  --warning: oklch(0.555 0.163 48.998);
+  --success: oklch(0.527 0.154 150.069);
+
+  /* Mode-dependent helpers used by the component styles. */
+  --outline-bg: var(--background);
+  --outline-bg-hover: var(--accent);
+  --field-bg: color-mix(in oklch, var(--input) 20%, transparent);
+  --soft: 10%;
+  --soft-hover: 20%;
+  --backdrop: oklch(0 0 0 / 0.2);
+  --focus-ring: color-mix(in oklch, var(--ring) 50%, transparent);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --shadow-md: 0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1);
+  --surface-ring: 0 0 0 1px color-mix(in oklch, var(--foreground) 10%, transparent);
+
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "JetBrains Mono", SFMono-Regular, Menlo, monospace;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+
+    --warning: oklch(0.828 0.189 84.429);
+    --success: oklch(0.792 0.209 151.711);
+    --outline-bg: color-mix(in oklch, var(--input) 30%, transparent);
+    --outline-bg-hover: color-mix(in oklch, var(--input) 50%, transparent);
+    --field-bg: color-mix(in oklch, var(--input) 30%, transparent);
+    --soft: 20%;
+    --soft-hover: 30%;
+    --backdrop: oklch(0 0 0 / 0.4);
+
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+
+  --warning: oklch(0.828 0.189 84.429);
+  --success: oklch(0.792 0.209 151.711);
+  --outline-bg: color-mix(in oklch, var(--input) 30%, transparent);
+  --outline-bg-hover: color-mix(in oklch, var(--input) 50%, transparent);
+  --field-bg: color-mix(in oklch, var(--input) 30%, transparent);
+  --soft: 20%;
+  --soft-hover: 30%;
+  --backdrop: oklch(0 0 0 / 0.4);
+
+  color-scheme: dark;
+}
+
+/* ---- @ui-sdk variable mapping (declared after the SDK's layer, so it wins) ---- */
+:root {
+  --ui-background: var(--background);
+  --ui-foreground: var(--foreground);
+  --ui-muted: var(--muted);
+  --ui-muted-foreground: var(--muted-foreground);
+  --ui-border: var(--border);
+  --ui-input: var(--input);
+  --ui-primary: var(--primary);
+  --ui-primary-foreground: var(--primary-foreground);
+  --ui-destructive: var(--destructive);
+  --ui-ring: var(--focus-ring);
+  --ui-ring-border: var(--ring);
+  --ui-overlay: var(--backdrop);
+  --ui-shadow: var(--shadow-md);
+  --ui-radius: var(--radius);
+  --ui-spacing: 0.25rem;
+  --ui-font-size: 0.75rem;
+  --ui-line-height: 1.625;
+  --ui-font-sans: var(--font-sans);
+  --ui-font-mono: var(--font-mono);
+}
