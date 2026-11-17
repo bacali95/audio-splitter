@@ -18,7 +18,8 @@ npx vitest run     # unit tests (time, name validation, segment colours)
 
 - Playback uses a plain `<audio>` element on an object URL; the file is never decoded whole.
 - The waveform comes from ffmpeg.wasm (single-thread core, self-hosted, no COOP/COEP needed). The file is mounted with WORKERFS (no copy), decoded to 4 kHz mono, and reduced to about 50 peaks per second. Peaks are cached in IndexedDB.
-- Segments autosave to localStorage (`audio-splitter:v1:<fingerprint>`). The fingerprint is a SHA-256 of the size plus the first, middle and last 1 MiB. To resume, pick the same file again.
+- Segments autosave to localStorage (`audio-splitter:v1:<fingerprint>`). The fingerprint is a SHA-256 of the size plus the first, middle and last 1 MiB. Edits are saved within 300 ms and flushed immediately on close, file switch or tab hide.
+- **Resume:** click a session under *Recent sessions*. In Chromium (Chrome, Edge, Brave…) files opened with *Browse files* or drag-and-drop keep a file handle in IndexedDB, so the session reopens directly (the browser may ask once for read access). In Firefox/Safari, or if the file was moved, you're asked to pick it again; picking a different file starts a new session and says so.
 - Export uses `-ss/-to` before `-i` with `-c copy` (lossless, cuts on audio-frame boundaries, about 20-30 ms). The optional "Re-encode" checkbox gives sample-accurate cuts (mp3: libmp3lame -q:a 2, m4a/aac: aac 192k, ogg/opus/webm: libopus 128k, flac). It is disabled for WAV (already exact) and for any format whose encoder is missing from the core.
 
 ## Shortcuts

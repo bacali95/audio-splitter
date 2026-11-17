@@ -63,10 +63,20 @@
 .dropzone[data-disabled] { opacity: 0.5; }
 
 .recent-list { list-style: none; margin: 0; padding: 0; }
-.recent-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); transition: background-color 0.15s; }
+.recent-item { position: relative; display: flex; align-items: center; gap: 0.5rem; padding: 0 0.75rem 0 0; border-bottom: 1px solid var(--border); transition: background-color 0.15s; }
 .recent-item:last-child { border-bottom: 0; }
-.recent-item:hover { background: color-mix(in oklch, var(--accent) 50%, transparent); }
+.recent-item:hover, .recent-item[data-expected] { background: color-mix(in oklch, var(--accent) 50%, transparent); }
+.recent-open {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0 0.5rem 0.75rem;
+  background: none; border: 0; border-radius: 0; color: inherit; font: inherit; text-align: left; cursor: pointer;
+}
+.recent-open:focus-visible { outline: 0; box-shadow: inset 0 0 0 2px var(--ring), inset 0 0 0 4px var(--focus-ring); }
+.recent-open:disabled { cursor: default; }
+.recent-item:has(.recent-open:disabled:not([aria-busy])) .recent-open { opacity: 0.6; }
 .recent-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.recent-hint { display: inline-flex; align-items: center; gap: 0.25rem; flex: none; color: var(--muted-foreground); font-size: 0.75rem; }
+.recent-hint svg { width: 0.875rem; height: 0.875rem; }
+.recent-open:is(:hover, :focus-visible):not(:disabled) .recent-hint { color: var(--foreground); }
 .recent-name { font-weight: 500; }
 
 .loading-body { display: grid; gap: 0.5rem; }

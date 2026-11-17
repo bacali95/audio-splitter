@@ -85,16 +85,27 @@ export function listSessions(): SessionListItem[] {
   return out.sort((a, b) => b.updatedAt - a.updatedAt)
 }
 
-// ---------- Peaks cache (IndexedDB) ----------
+// ---------- IndexedDB: peaks cache + file handles ----------
 
 const DB_NAME = 'audio-splitter'
+const DB_VERSION = 2
 const STORE = 'peaks'
+const HANDLES = 'handles'
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, 1)
-    req.onupgradeneeded = () => req.result.createObjectStore(STORE)
-    req.onsuccess = () => resolve(req.result)
+    const req = indexedDB.open(DB_NAME, DB_VERSION)
+    // v1 -> v2 adds `handles`; existing `peaks` data is untouched. Creation is guarded so fresh installs and upgrades share one path.
+    req.onupgradeneeded = () => {
+      const db = req.result
+      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE)
+      if (!db.objectStoreNames.contains(HANDLES)) db.createObjectStore(HANDLES)
+    }
+    req.onsuccess = () => {
+      const db = req.result
+      db.onversionchange = () => db.close()
+      resolve(db)
+    }
     req.onerror = () => reject(req.error)
   })
 }
@@ -137,5 +148,65 @@ export async function deletePeaks(fingerprint: string): Promise<void> {
     })
   } catch {
     /* ignore */
+  }
+}
+
+// ---------- File handles (Chromium File System Access API) ----------
+
+export async function putHandle(fingerprint: string, handle: FileSystemFileHandle): Promise<void> {
+  try {
+    const db = await openDb()
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(HANDLES, 'readwrite')
+      tx.objectStore(HANDLES).put(handle, fingerprint)
+      tx.oncomplete = () => resolve()
+      tx.onerror = () => reject(tx.error)
+    })
+  } catch (e) {
+    console.warn('Could not store file handle', e)
+  }
+}
+
+export async function getHandle(fingerprint: string): Promise<FileSystemFileHandle | null> {
+  try {
+    const db = await openDb()
+    return await new Promise((resolve, reject) => {
+      const req = db.transaction(HANDLES).objectStore(HANDLES).get(fingerprint)
+      req.onsuccess = () => {
+        const v: unknown = req.result
+        resolve(typeof v === 'object' && v !== null && (v as { kind?: unknown }).kind === 'file' ? (v as FileSystemFileHandle) : null)
+      }
+      req.onerror = () => reject(req.error)
+    })
+  } catch {
+    return null
+  }
+}
+
+export async function deleteHandle(fingerprint: string): Promise<void> {
+  try {
+    const db = await openDb()
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(HANDLES, 'readwrite')
+      tx.objectStore(HANDLES).delete(fingerprint)
+      tx.oncomplete = () => resolve()
+      tx.onerror = () => reject(tx.error)
+    })
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Fingerprints that have a stored handle. */
+export async function listHandleKeys(): Promise<Set<string>> {
+  try {
+    const db = await openDb()
+    return await new Promise((resolve, reject) => {
+      const req = db.transaction(HANDLES).objectStore(HANDLES).getAllKeys()
+      req.onsuccess = () => resolve(new Set(req.result.filter((k): k is string => typeof k === 'string')))
+      req.onerror = () => reject(req.error)
+    })
+  } catch {
+    return new Set()
   }
 }

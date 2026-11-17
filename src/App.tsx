@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ExportDialog } from './components/ExportDialog'
-import { FileLoader } from './components/FileLoader'
+import { ACCEPT, FileLoader } from './components/FileLoader'
 import { RecentSessions } from './components/RecentSessions'
 import { SegmentList } from './components/SegmentList'
 import { Transport } from './components/Transport'
@@ -20,15 +20,19 @@ import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Tip }
 import { Waveform } from './components/Waveform'
 import { useWaveform } from './hooks/useWaveform'
 import { fingerprintFile } from './lib/fingerprint'
+import { canPickFile, openHandle, pickAudioFile } from './lib/fsAccess'
 import { PEAKS_PER_SEC, generatePeaks, unmountFile } from './lib/ffmpeg'
 import {
   type Segment,
   type SessionListItem,
+  deleteHandle,
   deletePeaks,
   deleteSession,
+  getHandle,
   getPeaks,
   listSessions,
   loadSession,
+  putHandle,
   putPeaks,
   saveSession,
 } from './lib/storage'
@@ -105,6 +109,10 @@ export default function App() {
   segmentsRef.current = segments
   const loadToken = useRef(0)
   const restoredRef = useRef(false)
+  const [openingFp, setOpeningFp] = useState<string | null>(null)
+  const [expectedFp, setExpectedFp] = useState<string | null>(null)
+  const pickInputRef = useRef<HTMLInputElement>(null)
+  const expectedRef = useRef<SessionListItem | null>(null)
 
   const duration = loaded?.duration ?? 0
   const media = loaded?.media ?? null
@@ -128,7 +136,11 @@ export default function App() {
   })
 
   // ---- loading a file ----
-  const loadFile = useCallback(async (file: File) => {
+  const loadFile = useCallback(async (file: File, handle?: FileSystemFileHandle, expected?: { fingerprint: string; fileName: string }) => {
+    setOpeningFp(null)
+    setExpectedFp(null)
+    pendingSave.current?.()
+    pendingSave.current = null
     const token = ++loadToken.current
     const stale = () => token !== loadToken.current
     // Tear down the previous file.
@@ -153,6 +165,7 @@ export default function App() {
       setPhase({ kind: 'loading', fileName: file.name, label: 'Fingerprinting file…', progress: null })
       const fingerprint = await fingerprintFile(file)
       if (stale()) return
+      if (handle) void putHandle(fingerprint, handle)
 
       setPhase({ kind: 'loading', fileName: file.name, label: 'Reading audio metadata…', progress: null })
       url = URL.createObjectURL(file)
@@ -179,6 +192,11 @@ export default function App() {
       setLoaded({ file, fingerprint, media, url, duration, peaks })
       setPhase({ kind: 'ready' })
       if (restored.length > 0) toast.success(`Restored ${restored.length} segment${restored.length === 1 ? '' : 's'}`)
+      if (expected && expected.fingerprint !== fingerprint) {
+        toast.warning(`That's a different file than ${expected.fileName}`, {
+          description: `Started a new session for ${file.name}.`,
+        })
+      }
     } catch (e) {
       if (url) URL.revokeObjectURL(url)
       if (stale()) return
@@ -198,10 +216,16 @@ export default function App() {
     if (media) media.muted = muted
   }, [media, muted])
 
-  // ---- autosave (debounced) ----
+  // ---- autosave (debounced, flushed on close / file switch / page hide) ----
+  const pendingSave = useRef<(() => void) | null>(null)
+  const flushSave = useCallback(() => {
+    const save = pendingSave.current
+    pendingSave.current = null
+    save?.()
+  }, [])
   useEffect(() => {
     if (!loaded || !restoredRef.current) return
-    const t = setTimeout(() => {
+    const save = () => {
       if (segments.length === 0 && !loadSession(loaded.fingerprint)) return
       saveSession(loaded.fingerprint, {
         fileName: loaded.file.name,
@@ -210,9 +234,20 @@ export default function App() {
         updatedAt: Date.now(),
         segments,
       })
-    }, 300)
+    }
+    pendingSave.current = save
+    const t = setTimeout(flushSave, 300)
     return () => clearTimeout(t)
-  }, [segments, loaded])
+  }, [segments, loaded, flushSave])
+  useEffect(() => {
+    const onHide = () => flushSave()
+    window.addEventListener('pagehide', onHide)
+    document.addEventListener('visibilitychange', onHide)
+    return () => {
+      window.removeEventListener('pagehide', onHide)
+      document.removeEventListener('visibilitychange', onHide)
+    }
+  }, [flushSave])
 
   // Refresh the recent list when returning to the start screen.
   useEffect(() => {
@@ -320,6 +355,7 @@ export default function App() {
   )
 
   const closeFile = () => {
+    flushSave()
     ++loadToken.current
     setLoaded((prev) => {
       if (prev) {
@@ -341,7 +377,70 @@ export default function App() {
   const deleteRecent = (fp: string) => {
     deleteSession(fp)
     void deletePeaks(fp)
+    void deleteHandle(fp)
     setSessions(listSessions())
+  }
+
+  // ---- reopening a recent session ----
+  useEffect(() => {
+    const el = pickInputRef.current
+    if (!el) return
+    const onCancel = () => {
+      expectedRef.current = null
+      setExpectedFp(null)
+    }
+    el.addEventListener('cancel', onCancel)
+    return () => el.removeEventListener('cancel', onCancel)
+  }, [])
+
+  const pickForSession = useCallback(
+    async (s: SessionListItem) => {
+      toast.info(`Pick ${s.fileName} to resume`)
+      if (canPickFile()) {
+        setExpectedFp(s.fingerprint)
+        try {
+          const picked = await pickAudioFile()
+          if (picked) void loadFile(picked.file, picked.handle, s)
+          else {
+            setExpectedFp(null)
+            toast.dismiss()
+          }
+        } catch (e) {
+          // The picker needs a fresh user gesture; if the earlier permission prompt used it up, ask for a click.
+          setExpectedFp(null)
+          toast.dismiss()
+          toast.info(`Pick ${s.fileName} to resume`, {
+            description: e instanceof Error ? e.message : undefined,
+            duration: 10000,
+            action: { label: 'Pick file', onAction: () => void pickForSession(s) },
+          })
+        }
+        return
+      }
+      expectedRef.current = s
+      setExpectedFp(s.fingerprint)
+      pickInputRef.current?.click()
+    },
+    [loadFile],
+  )
+
+  const openSession = async (s: SessionListItem) => {
+    if (openingFp) return
+    setOpeningFp(s.fingerprint)
+    try {
+      // Keep this chain tight: requestPermission needs the click's transient user activation.
+      const handle = await getHandle(s.fingerprint)
+      if (handle) {
+        const res = await openHandle(handle)
+        if (res.ok) return void loadFile(res.file, handle, s)
+        if (res.reason === 'not-found') void deleteHandle(s.fingerprint)
+        toast.info(`Couldn't access ${s.fileName} — pick it again`)
+      }
+      setOpeningFp(null)
+      await pickForSession(s)
+    } finally {
+      setOpeningFp(null)
+    }
   }
 
   const ready = phase.kind === 'ready' && loaded
@@ -389,7 +488,13 @@ export default function App() {
         {phase.kind === 'idle' && (
           <div className="start">
             <FileLoader onFile={loadFile} onReject={rejectFile} />
-            <RecentSessions sessions={sessions} onDelete={deleteRecent} />
+            <RecentSessions
+              sessions={sessions}
+              onOpen={(s) => void openSession(s)}
+              onDelete={deleteRecent}
+              openingFingerprint={openingFp}
+              expectedFingerprint={expectedFp}
+            />
           </div>
         )}
 
@@ -480,6 +585,21 @@ export default function App() {
           onRename={renameSegment}
         />
       )}
+
+      <input
+        ref={pickInputRef}
+        type="file"
+        hidden
+        accept={ACCEPT.join(',')}
+        onChange={(e) => {
+          const file = e.target.files?.[0]
+          const expected = expectedRef.current
+          expectedRef.current = null
+          e.target.value = ''
+          if (file) void loadFile(file, undefined, expected ?? undefined)
+          else setExpectedFp(null)
+        }}
+      />
 
       <ToastRegion side="bottom" align="end">
         {(t) => (
