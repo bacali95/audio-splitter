@@ -2,7 +2,7 @@
 
 Browser-only tool to split one long audio file (hours, hundreds of MB) into named segments. No backend; files never leave your machine.
 
-**Live:** https://bacali95.github.io/audio-splitter/ (deployed to GitHub Pages on every push to `main`).
+**Live:** https://bacali95.github.io/audio-splitter/ (deployed to GitHub Pages whenever a GitHub Release is published; can also be run manually from the Actions tab).
 
 ## Run
 
