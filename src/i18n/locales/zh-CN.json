@@ -1,0 +1,203 @@
+{
+  "app": {
+    "title": "Audio Splitter"
+  },
+  "header": {
+    "close": "关闭",
+    "export": "完成并导出",
+    "exportHint": "请至少添加一个片段",
+    "loadAnother": "打开其他文件"
+  },
+  "language": {
+    "label": "语言"
+  },
+  "dropzone": {
+    "title": "将音频文件拖放到此处",
+    "hint": "{{formats}}。文件仅保留在您的电脑上。",
+    "browse": "浏览文件"
+  },
+  "filePicker": {
+    "description": "音频"
+  },
+  "loading": {
+    "description": "首次打开文件时，会在本地计算其波形（2 小时的文件需要一两分钟），之后将缓存以供下次使用。",
+    "analysing": "正在分析音频",
+    "stage": {
+      "fingerprint": "正在计算文件指纹…",
+      "metadata": "正在读取音频元数据…",
+      "ffmpeg": "正在加载 ffmpeg…",
+      "analysing": "正在分析音频…"
+    }
+  },
+  "recent": {
+    "title": "最近的会话",
+    "description": "您的片段保存在此浏览器中。点击某个会话即可继续：在 Chromium 内核浏览器中会直接重新打开文件，在其他浏览器中则需要再次选择同一个音频文件。文件不会被上传或存储。",
+    "segments_other": "{{count}} 个片段",
+    "open": "打开",
+    "pickFile": "选择文件…",
+    "delete": "删除会话",
+    "unknownDate": "日期未知"
+  },
+  "transport": {
+    "backTip": "后退 5 秒 (←)",
+    "forwardTip": "前进 5 秒 (→)",
+    "play": "播放",
+    "pause": "暂停",
+    "playTip": "播放（{{key}}）",
+    "pauseTip": "暂停（{{key}}）",
+    "markStart": "标记起点",
+    "markStartTip": "在播放头处设置片段起点 ( [ )",
+    "markEnd": "标记终点",
+    "markEndTip": "在播放头处设置片段终点 ( ] )",
+    "markEndNeedsStart": "请先设置起点",
+    "mute": "静音",
+    "unmute": "取消静音",
+    "speedValue": "{{value}}×",
+    "pending": "起点已设为 <time>{{time}}</time>，请按 <endKey/> 或点击<strong>标记终点</strong>",
+    "cancelPendingTip": "取消（{{key}}）"
+  },
+  "shortcuts": {
+    "button": "快捷键",
+    "title": "键盘快捷键",
+    "keys": {
+      "space": "空格键",
+      "shiftLeft": "Shift + ←",
+      "shiftRight": "Shift + →",
+      "delete": "Delete",
+      "del": "Del",
+      "backspace": "Backspace",
+      "esc": "Esc",
+      "ctrlWheel": "Ctrl/⌘ + 滚轮",
+      "dragWaveform": "在波形上拖动",
+      "clickWaveform": "在波形上单击"
+    },
+    "playPause": "播放 / 暂停",
+    "seek5": "跳转 5 秒",
+    "seek30": "跳转 30 秒",
+    "markStart": "标记片段起点",
+    "markEnd": "标记终点并创建片段",
+    "deleteSegment": "删除所选片段",
+    "clearSelection": "清除选择和起点",
+    "zoom": "缩放波形",
+    "createByDrag": "创建片段",
+    "seekByClick": "跳转"
+  },
+  "waveform": {
+    "startMarker": "起点"
+  },
+  "segments": {
+    "title": "片段",
+    "overlapping_other": "{{count}} 个重叠",
+    "overlapWarning": "部分片段存在重叠，导出的文件将包含两次重叠部分的音频",
+    "overlapTip": "与其他片段重叠",
+    "empty": {
+      "title": "暂无片段。",
+      "hint": "在波形上拖动，或按 <startKey/> 在播放头处设置起点，按 <endKey/> 设置终点。"
+    },
+    "columns": {
+      "index": "#",
+      "name": "名称",
+      "start": "起点",
+      "end": "终点",
+      "length": "时长"
+    },
+    "play": "播放片段",
+    "jump": "跳到起点",
+    "deleteTip": "删除片段（{{key}}）"
+  },
+  "export": {
+    "dialog": {
+      "title_other": "导出 {{count}} 个片段",
+      "descriptionFolder": "为每个文件命名。扩展名 <ext>{{ext}}</ext> 沿用原文件。系统将请您选择目标文件夹。",
+      "descriptionZip": "为每个文件命名。扩展名 <ext>{{ext}}</ext> 沿用原文件。文件将打包为 ZIP 下载。",
+      "noExtension": "（无）"
+    },
+    "reencode": {
+      "label": "重新编码以实现采样级精确剪切",
+      "default": "速度较慢且有损。流复制（默认）无损，但只能在音频帧边界处剪切（~20–30 ms）。",
+      "wav": "WAV 为 PCM 格式：流复制本身即可实现采样级精确。",
+      "unsupportedFormat": "不支持对“{{ext}}”文件重新编码。",
+      "checkFailed": "无法检查编码器是否可用。",
+      "checking": "正在检查编码器…",
+      "missingEncoder": "此 ffmpeg 版本缺少该格式的编码器。"
+    },
+    "progress": "正在导出第 {{current}} 个，共 {{total}} 个",
+    "exporting": "正在导出…",
+    "chooseFolder": "选择文件夹并导出",
+    "downloadZip": "下载 ZIP",
+    "cancel": "取消",
+    "done": "完成",
+    "failed": "失败",
+    "failedWith": "失败：{{error}}",
+    "unknownError": "未知错误",
+    "success": {
+      "title": "导出完成",
+      "description": "您的片段已准备就绪。",
+      "folderTitle_other": "已将 {{count}} 个文件导出到{{folder}}",
+      "folderFallback": "所选文件夹",
+      "folderBody": "文件已直接写入您选择的文件夹。",
+      "zipTitle": "ZIP 已下载",
+      "zipBody_other": "{{count}} 个文件已打包为 {{zip}}。"
+    }
+  },
+  "toast": {
+    "restored_other": "已恢复 {{count}} 个片段",
+    "differentFile": "这与 {{expected}} 不是同一个文件",
+    "differentFileDescription": "已为 {{name}} 开始新的会话。",
+    "loadFailed": "无法加载文件",
+    "startFirst": "请先设置起点",
+    "startFirstDescription": "请按 [ 或点击“标记起点”。",
+    "endAfterStart": "终点必须在起点之后",
+    "endAfterStartDescription": "起点位于 {{time}}。请将播放头移到更靠后的位置，然后重试。",
+    "segmentDeleted": "已删除片段 {{n}}",
+    "undo": "撤销",
+    "pickToResume": "请选择 {{name}} 以继续",
+    "pickFile": "选择文件",
+    "cantAccess": "无法访问 {{name}}，请重新选择",
+    "unsupportedType": "不支持该文件类型",
+    "pickerFailed": "无法打开文件选择器",
+    "folderFailed": "无法打开文件夹：{{message}}",
+    "exportFailed": "导出失败"
+  },
+  "errors": {
+    "timeFormat": "请使用 HH:MM:SS.mmm 格式",
+    "unplayable": "此浏览器无法播放该文件（编解码器不受支持或文件已损坏）。",
+    "ffmpegExit": "ffmpeg 已退出，退出码 {{code}}：{{log}}",
+    "pickerUnavailable": "此浏览器不支持文件选择器。",
+    "name": {
+      "required": "名称不能为空",
+      "forbiddenChars": "不得包含 \\ / : * ? \" < > |",
+      "invalid": "名称无效",
+      "tooLong": "名称过长",
+      "duplicate": "名称重复"
+    },
+    "range": {
+      "endBeforeStart": "终点必须在起点之后",
+      "startNegative": "起点必须 >= 0",
+      "endPastFile": "终点超出文件末尾"
+    }
+  },
+  "aria": {
+    "transport": "播放控制",
+    "playback": "播放",
+    "segment": "片段",
+    "back5": "后退 5 秒",
+    "forward5": "前进 5 秒",
+    "clock": "当前时间和总时长",
+    "playbackSpeed": "播放速度",
+    "zoom": "缩放",
+    "volume": "音量",
+    "cancelPending": "取消已设置的起点",
+    "close": "关闭",
+    "segmentName": "片段 {{n}} 的名称",
+    "segmentStart": "片段 {{n}} 的起点",
+    "segmentEnd": "片段 {{n}} 的终点",
+    "playSegment": "播放片段 {{n}}",
+    "jumpToSegmentStart": "跳到片段 {{n}} 的起点",
+    "deleteSegment": "删除片段 {{n}}",
+    "exportFileName": "片段 {{n}} 的文件名",
+    "openSession": "打开 {{name}}",
+    "pickSession": "选择文件以继续 {{name}}",
+    "deleteSession": "删除 {{name}} 的会话"
+  }
+}

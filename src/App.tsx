@@ -11,14 +11,19 @@ import {
   TriangleAlertIcon,
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ExportDialog } from './components/ExportDialog'
 import { ACCEPT, FileLoader } from './components/FileLoader'
 import { RecentSessions } from './components/RecentSessions'
 import { SegmentList } from './components/SegmentList'
 import { Transport } from './components/Transport'
+import { LanguageSwitcher } from './components/LanguageSwitcher'
 import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Tip } from './components/ui'
 import { Waveform } from './components/Waveform'
+import i18n from './i18n'
+import { describeError } from './i18n/describeError'
 import { useWaveform } from './hooks/useWaveform'
+import { AppError } from './lib/errors'
 import { fingerprintFile } from './lib/fingerprint'
 import { canPickFile, openHandle, pickAudioFile } from './lib/fsAccess'
 import { PEAKS_PER_SEC, generatePeaks, unmountFile } from './lib/ffmpeg'
@@ -49,9 +54,11 @@ interface Loaded {
   peaks: Float32Array
 }
 
+type LoadStage = 'fingerprint' | 'metadata' | 'ffmpeg' | 'analysing'
+
 type Phase =
   | { kind: 'idle' }
-  | { kind: 'loading'; fileName: string; label: string; progress: number | null }
+  | { kind: 'loading'; fileName: string; stage: LoadStage; progress: number | null }
   | { kind: 'ready' }
 
 /** Targets that own Delete/Backspace/Escape themselves (text fields, open popups, dialogs). */
@@ -87,12 +94,14 @@ function readMetadata(url: string): Promise<HTMLAudioElement> {
     const a = new Audio()
     a.preload = 'metadata'
     a.onloadedmetadata = () => resolve(a)
-    a.onerror = () => reject(new Error("This browser can't play that file (unsupported codec or corrupt file)."))
+    a.onerror = () => reject(new AppError('unplayable'))
     a.src = url
   })
 }
 
 export default function App() {
+  const { t, i18n: i18nInstance } = useTranslation()
+  const locale = i18nInstance.language
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' })
   const [loaded, setLoaded] = useState<Loaded | null>(null)
   const [segments, setSegments] = useState<Segment[]>([])
@@ -162,12 +171,12 @@ export default function App() {
 
     let url = ''
     try {
-      setPhase({ kind: 'loading', fileName: file.name, label: 'Fingerprinting file…', progress: null })
+      setPhase({ kind: 'loading', fileName: file.name, stage: 'fingerprint', progress: null })
       const fingerprint = await fingerprintFile(file)
       if (stale()) return
       if (handle) void putHandle(fingerprint, handle)
 
-      setPhase({ kind: 'loading', fileName: file.name, label: 'Reading audio metadata…', progress: null })
+      setPhase({ kind: 'loading', fileName: file.name, stage: 'metadata', progress: null })
       url = URL.createObjectURL(file)
       const media = await readMetadata(url)
       if (stale()) return URL.revokeObjectURL(url)
@@ -176,9 +185,9 @@ export default function App() {
       let peaks = await getPeaks(fingerprint)
       if (stale()) return URL.revokeObjectURL(url)
       if (!peaks) {
-        setPhase({ kind: 'loading', fileName: file.name, label: 'Loading ffmpeg…', progress: null })
+        setPhase({ kind: 'loading', fileName: file.name, stage: 'ffmpeg', progress: null })
         peaks = await generatePeaks(file, mediaDuration, (r) => {
-          if (!stale()) setPhase({ kind: 'loading', fileName: file.name, label: 'Analysing audio…', progress: r })
+          if (!stale()) setPhase({ kind: 'loading', fileName: file.name, stage: 'analysing', progress: r })
         })
         if (stale()) return URL.revokeObjectURL(url)
         void putPeaks(fingerprint, peaks)
@@ -191,17 +200,17 @@ export default function App() {
       setSegments(restored)
       setLoaded({ file, fingerprint, media, url, duration, peaks })
       setPhase({ kind: 'ready' })
-      if (restored.length > 0) toast.success(`Restored ${restored.length} segment${restored.length === 1 ? '' : 's'}`)
+      if (restored.length > 0) toast.success(i18n.t('toast.restored', { count: restored.length }))
       if (expected && expected.fingerprint !== fingerprint) {
-        toast.warning(`That's a different file than ${expected.fileName}`, {
-          description: `Started a new session for ${file.name}.`,
+        toast.warning(i18n.t('toast.differentFile', { expected: expected.fileName }), {
+          description: i18n.t('toast.differentFileDescription', { name: file.name }),
         })
       }
     } catch (e) {
       if (url) URL.revokeObjectURL(url)
       if (stale()) return
       setPhase({ kind: 'idle' })
-      toast.error('Could not load file', { description: e instanceof Error ? e.message : String(e) })
+      toast.error(i18n.t('toast.loadFailed'), { description: describeError(e) })
     }
   }, [])
 
@@ -262,13 +271,13 @@ export default function App() {
   const markEnd = useCallback(() => {
     if (!loaded) return
     if (pendingStart === null) {
-      toast.warning('Set a start first', { description: 'Press [ or "Mark start".' })
+      toast.warning(i18n.t('toast.startFirst'), { description: i18n.t('toast.startFirstDescription') })
       return
     }
     const end = wf.getTime()
     if (end - pendingStart < 0.05) {
-      toast.error('End must be after the start', {
-        description: `Start is at ${formatTime(pendingStart)}. Move the playhead later and try again.`,
+      toast.error(i18n.t('toast.endAfterStart'), {
+        description: i18n.t('toast.endAfterStartDescription', { time: formatTime(pendingStart) }),
       })
       return
     }
@@ -284,11 +293,11 @@ export default function App() {
     const index = segmentOrder(segmentsRef.current).get(id) ?? 0
     setSegments((p) => p.filter((s) => s.id !== id))
     setActiveId((a) => (a === id ? null : a))
-    toast(`Segment ${index + 1} deleted`, {
+    toast(i18n.t('toast.segmentDeleted', { n: index + 1 }), {
       description: `${formatTime(seg.start)} – ${formatTime(seg.end)}`,
       duration: 10000,
       action: {
-        label: 'Undo',
+        label: i18n.t('toast.undo'),
         onAction: () => {
           setSegments((p) => (p.some((s) => s.id === seg.id) ? p : [...p, seg]))
           setActiveId(seg.id)
@@ -395,11 +404,11 @@ export default function App() {
 
   const pickForSession = useCallback(
     async (s: SessionListItem) => {
-      toast.info(`Pick ${s.fileName} to resume`)
+      toast.info(i18n.t('toast.pickToResume', { name: s.fileName }))
       if (canPickFile()) {
         setExpectedFp(s.fingerprint)
         try {
-          const picked = await pickAudioFile()
+          const picked = await pickAudioFile(i18n.t('filePicker.description'))
           if (picked) void loadFile(picked.file, picked.handle, s)
           else {
             setExpectedFp(null)
@@ -409,10 +418,10 @@ export default function App() {
           // The picker needs a fresh user gesture; if the earlier permission prompt used it up, ask for a click.
           setExpectedFp(null)
           toast.dismiss()
-          toast.info(`Pick ${s.fileName} to resume`, {
-            description: e instanceof Error ? e.message : undefined,
+          toast.info(i18n.t('toast.pickToResume', { name: s.fileName }), {
+            description: e instanceof Error ? describeError(e) : undefined,
             duration: 10000,
-            action: { label: 'Pick file', onAction: () => void pickForSession(s) },
+            action: { label: i18n.t('toast.pickFile'), onAction: () => void pickForSession(s) },
           })
         }
         return
@@ -434,7 +443,7 @@ export default function App() {
         const res = await openHandle(handle)
         if (res.ok) return void loadFile(res.file, handle, s)
         if (res.reason === 'not-found') void deleteHandle(s.fingerprint)
-        toast.info(`Couldn't access ${s.fileName} — pick it again`)
+        toast.info(i18n.t('toast.cantAccess', { name: s.fileName }))
       }
       setOpeningFp(null)
       await pickForSession(s)
@@ -445,7 +454,7 @@ export default function App() {
 
   const ready = phase.kind === 'ready' && loaded
   const baseName = useMemo(() => (loaded ? splitExt(loaded.file.name).base : ''), [loaded])
-  const rejectFile = () => toast.error('That file type is not supported')
+  const rejectFile = () => toast.error(i18n.t('toast.unsupportedType'))
   return (
     <div className="app">
       <header className="app-header">
@@ -454,29 +463,30 @@ export default function App() {
             <span className="brand-mark" aria-hidden="true">
               <ScissorsIcon />
             </span>
-            <span className="brand-name">Audio Splitter</span>
+            <span className="brand-name">{t('app.title')}</span>
           </div>
           {ready && (
             <div className="file-info">
               <span className="file-name truncate" title={loaded.file.name}>{loaded.file.name}</span>
-              <Badge variant="secondary" className="mono">{formatTime(duration, false)}</Badge>
+              <Badge variant="secondary" className="mono" dir="ltr">{formatTime(duration, false)}</Badge>
             </div>
           )}
           <div className="header-actions">
+            <LanguageSwitcher />
             {(ready || phase.kind === 'loading') && <FileLoader compact onFile={loadFile} onReject={rejectFile} />}
             {ready && (
               <Button data-variant="ghost" onClick={closeFile}>
-                Close
+                {t('header.close')}
               </Button>
             )}
             {ready && (
-              <Tip label="Add at least one segment" disabled={segments.length > 0}>
+              <Tip label={t('header.exportHint')} disabled={segments.length > 0}>
                 <Button
                   disabled={segments.length === 0}
                   focusableWhenDisabled
                   onClick={() => setExportOpen(true)}
                 >
-                  <DownloadIcon aria-hidden="true" /> Finish &amp; export <Badge>{segments.length}</Badge>
+                  <DownloadIcon aria-hidden="true" /> {t('header.export')} <Badge>{segments.length}</Badge>
                 </Button>
               </Tip>
             )}
@@ -503,15 +513,13 @@ export default function App() {
             <Card role="status" aria-live="polite">
               <CardHeader stacked>
                 <CardTitle className="truncate" title={phase.fileName}>{phase.fileName}</CardTitle>
-                <CardDescription>
-                  The first time a file is opened its waveform is computed locally (a 2 hour file takes a minute or
-                  two). It is cached for next time.
-                </CardDescription>
+                <CardDescription>{t('loading.description')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="loading-body">
                   <Progress
-                    aria-label="Analysing audio"
+                    aria-label={t('loading.analysing')}
+                    locale={locale}
                     value={phase.progress === null ? null : Math.round(phase.progress * 100)}
                   >
                     <ProgressValue />
@@ -519,7 +527,7 @@ export default function App() {
                       <ProgressIndicator />
                     </ProgressTrack>
                   </Progress>
-                  <p className="muted">{phase.label}</p>
+                  <p className="muted">{t(`loading.stage.${phase.stage}`)}</p>
                 </div>
               </CardContent>
             </Card>

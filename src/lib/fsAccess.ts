@@ -1,3 +1,5 @@
+import { AppError } from './errors'
+
 /** Helpers around the File System Access API. Everything is feature-detected; nothing here assumes Chromium. */
 
 export const AUDIO_EXTENSIONS = ['.mp3', '.wav', '.m4a', '.aac', '.flac', '.ogg', '.opus', '.webm']
@@ -18,12 +20,12 @@ export interface PickedFile {
   handle: FileSystemFileHandle
 }
 
-/** Opens the native picker. Resolves null when the user cancels. Must be called from a user gesture. */
-export async function pickAudioFile(): Promise<PickedFile | null> {
-  if (!window.showOpenFilePicker) throw new Error('showOpenFilePicker is not available')
+/** Opens the native picker (`description` is the localised file-type label). Resolves null when the user cancels. Must be called from a user gesture. */
+export async function pickAudioFile(description: string): Promise<PickedFile | null> {
+  if (!window.showOpenFilePicker) throw new AppError('pickerUnavailable')
   try {
     const [handle] = await window.showOpenFilePicker({
-      types: [{ description: 'Audio', accept: { 'audio/*': AUDIO_EXTENSIONS } }],
+      types: [{ description, accept: { 'audio/*': AUDIO_EXTENSIONS } }],
       excludeAcceptAllOption: false,
       multiple: false,
     })

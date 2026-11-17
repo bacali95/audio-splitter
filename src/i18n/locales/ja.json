@@ -1,0 +1,203 @@
+{
+  "app": {
+    "title": "Audio Splitter"
+  },
+  "header": {
+    "close": "閉じる",
+    "export": "完了して書き出し",
+    "exportHint": "セグメントを1つ以上追加してください",
+    "loadAnother": "別のファイルを開く"
+  },
+  "language": {
+    "label": "言語"
+  },
+  "dropzone": {
+    "title": "ここにオーディオファイルをドロップ",
+    "hint": "{{formats}}。ファイルはお使いのコンピュータ内にのみ保持されます。",
+    "browse": "ファイルを選択"
+  },
+  "filePicker": {
+    "description": "オーディオ"
+  },
+  "loading": {
+    "description": "ファイルを初めて開くときは、波形をローカルで計算します（2時間のファイルで1～2分かかります）。結果はキャッシュされ、次回以降は再利用されます。",
+    "analysing": "オーディオを解析中",
+    "stage": {
+      "fingerprint": "ファイルのフィンガープリントを計算中…",
+      "metadata": "オーディオのメタデータを読み込み中…",
+      "ffmpeg": "ffmpegを読み込み中…",
+      "analysing": "オーディオを解析中…"
+    }
+  },
+  "recent": {
+    "title": "最近のセッション",
+    "description": "セグメントはこのブラウザに保存されています。セッションをクリックすると再開できます。Chromium系ブラウザではファイルが直接開き、それ以外のブラウザでは同じオーディオファイルをもう一度選択する必要があります。ファイルがアップロードされたり保存されたりすることはありません。",
+    "segments_other": "{{count}}個のセグメント",
+    "open": "開く",
+    "pickFile": "ファイルを選択…",
+    "delete": "セッションを削除",
+    "unknownDate": "日付不明"
+  },
+  "transport": {
+    "backTip": "5秒戻る (←)",
+    "forwardTip": "5秒進む (→)",
+    "play": "再生",
+    "pause": "一時停止",
+    "playTip": "再生（{{key}}）",
+    "pauseTip": "一時停止（{{key}}）",
+    "markStart": "開始をマーク",
+    "markStartTip": "再生ヘッドの位置にセグメントの開始を設定 ( [ )",
+    "markEnd": "終了をマーク",
+    "markEndTip": "再生ヘッドの位置にセグメントの終了を設定 ( ] )",
+    "markEndNeedsStart": "先に開始を設定してください",
+    "mute": "ミュート",
+    "unmute": "ミュート解除",
+    "speedValue": "{{value}}×",
+    "pending": "開始位置を <time>{{time}}</time> に設定しました。<endKey/> キーを押すか、<strong>終了をマーク</strong>をクリックしてください",
+    "cancelPendingTip": "キャンセル（{{key}}）"
+  },
+  "shortcuts": {
+    "button": "ショートカット",
+    "title": "キーボードショートカット",
+    "keys": {
+      "space": "スペース",
+      "shiftLeft": "Shift + ←",
+      "shiftRight": "Shift + →",
+      "delete": "Delete",
+      "del": "Del",
+      "backspace": "BackSpace",
+      "esc": "Esc",
+      "ctrlWheel": "Ctrl/⌘ + ホイール",
+      "dragWaveform": "波形上でドラッグ",
+      "clickWaveform": "波形上でクリック"
+    },
+    "playPause": "再生 / 一時停止",
+    "seek5": "5秒シーク",
+    "seek30": "30秒シーク",
+    "markStart": "セグメントの開始をマーク",
+    "markEnd": "終了をマークしてセグメントを作成",
+    "deleteSegment": "選択したセグメントを削除",
+    "clearSelection": "選択と開始位置を解除",
+    "zoom": "波形をズーム",
+    "createByDrag": "セグメントを作成",
+    "seekByClick": "シーク"
+  },
+  "waveform": {
+    "startMarker": "開始"
+  },
+  "segments": {
+    "title": "セグメント",
+    "overlapping_other": "{{count}}個が重複",
+    "overlapWarning": "重複しているセグメントがあります。書き出したファイルには重複部分のオーディオが2回含まれます",
+    "overlapTip": "ほかのセグメントと重複しています",
+    "empty": {
+      "title": "セグメントはまだありません。",
+      "hint": "波形上をドラッグするか、<startKey/> キーで再生ヘッドの位置に開始を、<endKey/> キーで終了を設定してください。"
+    },
+    "columns": {
+      "index": "#",
+      "name": "名前",
+      "start": "開始",
+      "end": "終了",
+      "length": "長さ"
+    },
+    "play": "セグメントを再生",
+    "jump": "開始位置へ移動",
+    "deleteTip": "セグメントを削除（{{key}}）"
+  },
+  "export": {
+    "dialog": {
+      "title_other": "{{count}}個のセグメントを書き出し",
+      "descriptionFolder": "各ファイルに名前を付けてください。拡張子 <ext>{{ext}}</ext> は元のファイルのものが引き継がれます。保存先フォルダの選択を求められます。",
+      "descriptionZip": "各ファイルに名前を付けてください。拡張子 <ext>{{ext}}</ext> は元のファイルのものが引き継がれます。ファイルはZIPにまとめてダウンロードされます。",
+      "noExtension": "（なし）"
+    },
+    "reencode": {
+      "label": "サンプル単位で正確にカットするため再エンコード",
+      "default": "処理は遅くなり、劣化も生じます。ストリームコピー（デフォルト）は劣化がなく、オーディオフレームの境界（~20–30 ms）でカットされます。",
+      "wav": "WAVはPCMです。ストリームコピーでもすでにサンプル単位で正確にカットされます。",
+      "unsupportedFormat": "「{{ext}}」ファイルは再エンコードできません。",
+      "checkFailed": "エンコーダーの利用可否を確認できませんでした。",
+      "checking": "エンコーダーを確認中…",
+      "missingEncoder": "このffmpegビルドには、この形式のエンコーダーが含まれていません。"
+    },
+    "progress": "書き出し中（{{current}}/{{total}}）",
+    "exporting": "書き出し中…",
+    "chooseFolder": "フォルダを選択して書き出し",
+    "downloadZip": "ZIPをダウンロード",
+    "cancel": "キャンセル",
+    "done": "完了",
+    "failed": "失敗",
+    "failedWith": "失敗：{{error}}",
+    "unknownError": "不明なエラー",
+    "success": {
+      "title": "書き出しが完了しました",
+      "description": "セグメントの準備ができました。",
+      "folderTitle_other": "{{count}}個のファイルを{{folder}}に書き出しました",
+      "folderFallback": "選択したフォルダ",
+      "folderBody": "ファイルは選択したフォルダに直接書き込まれました。",
+      "zipTitle": "ZIPをダウンロードしました",
+      "zipBody_other": "{{count}}個のファイルを{{zip}}にまとめました。"
+    }
+  },
+  "toast": {
+    "restored_other": "{{count}}個のセグメントを復元しました",
+    "differentFile": "{{expected}} とは別のファイルです",
+    "differentFileDescription": "{{name}} の新しいセッションを開始しました。",
+    "loadFailed": "ファイルを読み込めませんでした",
+    "startFirst": "先に開始を設定してください",
+    "startFirstDescription": "[ キーを押すか、「開始をマーク」をクリックしてください。",
+    "endAfterStart": "終了は開始より後にしてください",
+    "endAfterStartDescription": "開始位置は {{time}} です。再生ヘッドをもっと後ろに移動して、もう一度お試しください。",
+    "segmentDeleted": "セグメント {{n}} を削除しました",
+    "undo": "元に戻す",
+    "pickToResume": "再開するには {{name}} を選択してください",
+    "pickFile": "ファイルを選択",
+    "cantAccess": "{{name}} にアクセスできません。もう一度選択してください",
+    "unsupportedType": "このファイル形式には対応していません",
+    "pickerFailed": "ファイル選択ダイアログを開けませんでした",
+    "folderFailed": "フォルダを開けませんでした：{{message}}",
+    "exportFailed": "書き出しに失敗しました"
+  },
+  "errors": {
+    "timeFormat": "HH:MM:SS.mmm の形式で入力してください",
+    "unplayable": "このブラウザではそのファイルを再生できません（コーデック非対応、またはファイルが破損しています）。",
+    "ffmpegExit": "ffmpegがコード {{code}} で終了しました：{{log}}",
+    "pickerUnavailable": "このブラウザではファイル選択を利用できません。",
+    "name": {
+      "required": "名前を入力してください",
+      "forbiddenChars": "次の文字は使用できません：\\ / : * ? \" < > |",
+      "invalid": "名前が無効です",
+      "tooLong": "名前が長すぎます",
+      "duplicate": "名前が重複しています"
+    },
+    "range": {
+      "endBeforeStart": "終了は開始より後にしてください",
+      "startNegative": "開始は 0 以上にしてください",
+      "endPastFile": "終了位置がファイルの末尾を超えています"
+    }
+  },
+  "aria": {
+    "transport": "トランスポート",
+    "playback": "再生",
+    "segment": "セグメント",
+    "back5": "5秒戻る",
+    "forward5": "5秒進む",
+    "clock": "現在の時間と長さ",
+    "playbackSpeed": "再生速度",
+    "zoom": "ズーム",
+    "volume": "音量",
+    "cancelPending": "設定中の開始をキャンセル",
+    "close": "閉じる",
+    "segmentName": "セグメント {{n}} の名前",
+    "segmentStart": "セグメント {{n}} の開始",
+    "segmentEnd": "セグメント {{n}} の終了",
+    "playSegment": "セグメント {{n}} を再生",
+    "jumpToSegmentStart": "セグメント {{n}} の開始位置へ移動",
+    "deleteSegment": "セグメント {{n}} を削除",
+    "exportFileName": "セグメント {{n}} のファイル名",
+    "openSession": "{{name}} を開く",
+    "pickSession": "{{name}} を再開するファイルを選択",
+    "deleteSession": "{{name}} のセッションを削除"
+  }
+}

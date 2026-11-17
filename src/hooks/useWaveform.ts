@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import WaveSurfer from 'wavesurfer.js'
 import RegionsPlugin, { type Region } from 'wavesurfer.js/plugins/regions'
 import TimelinePlugin from 'wavesurfer.js/plugins/timeline'
@@ -86,6 +87,7 @@ export function zoomToPps(z: number): number {
 
 export function useWaveform(opts: UseWaveformOptions): WaveformApi {
   const { waveformEl, timelineEl, media, peaks, duration, segments, pendingStart, activeId } = opts
+  const { t } = useTranslation()
   const wsRef = useRef<WaveSurfer | null>(null)
   const regionsRef = useRef<ReturnType<typeof RegionsPlugin.create> | null>(null)
   const segmentsRef = useRef(segments)
@@ -300,13 +302,13 @@ export function useWaveform(opts: UseWaveformOptions): WaveformApi {
         id: PENDING_ID,
         start: pendingStart,
         color: readWaveColors().primary,
-        content: makeLabel('Start', 'var(--primary)', false),
+        content: makeLabel(t('waveform.startMarker'), 'var(--primary)', false),
         drag: false,
         resize: false,
         avoidOverlapping: false,
       })
     }
-  }, [pendingStart, ready, duration, themeTick])
+  }, [pendingStart, ready, duration, themeTick, t])
 
   const play = useCallback(() => {
     stopAtRef.current = null

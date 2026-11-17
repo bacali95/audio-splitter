@@ -28,6 +28,12 @@ describe('validateName', () => {
     expect(validateName('Chapter 1 - Intro (v2)')).toBeNull()
     expect(validateName('éàü_01')).toBeNull()
   })
+  it('returns codes', () => {
+    expect(validateName('')).toBe('required')
+    expect(validateName('a/b')).toBe('forbiddenChars')
+    expect(validateName('..')).toBe('invalid')
+    expect(validateName('x'.repeat(201))).toBe('tooLong')
+  })
   it('rejects dot names', () => {
     expect(validateName('..')).not.toBeNull()
   })
@@ -35,9 +41,9 @@ describe('validateName', () => {
 
 describe('validateNames', () => {
   it('flags duplicates case-insensitively', () => {
-    expect(validateNames(['a', 'B', 'b', 'c'])).toEqual([null, 'Duplicate name', 'Duplicate name', null])
+    expect(validateNames(['a', 'B', 'b', 'c'])).toEqual([null, 'duplicate', 'duplicate', null])
   })
   it('flags individual errors first', () => {
-    expect(validateNames(['', 'ok'])).toEqual(['Name is required', null])
+    expect(validateNames(['', 'ok'])).toEqual(['required', null])
   })
 })

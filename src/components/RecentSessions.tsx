@@ -1,6 +1,7 @@
 import { ChevronRightIcon, FolderOpenIcon, Loader2Icon, Trash2Icon } from 'lucide-react'
 import { Button } from '@ui-sdk/react/button'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { type SessionListItem, listHandleKeys } from '../lib/storage'
 import { formatRelative, formatTime } from '../lib/time'
 import { Card, CardDescription, CardHeader, CardTitle, Tip } from './ui'
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export function RecentSessions({ sessions, onOpen, onDelete, openingFingerprint, expectedFingerprint }: Props) {
+  const { t, i18n } = useTranslation()
   const [withHandle, setWithHandle] = useState<Set<string>>(new Set())
   useEffect(() => {
     let live = true
@@ -30,12 +32,8 @@ export function RecentSessions({ sessions, onOpen, onDelete, openingFingerprint,
   return (
     <Card flush aria-labelledby="recent-h">
       <CardHeader bordered stacked>
-        <CardTitle id="recent-h">Recent sessions</CardTitle>
-        <CardDescription>
-          Your segments are saved in this browser. Click a session to resume it: in Chromium browsers it reopens
-          the file directly, in other browsers you will be asked to pick the same audio file again. Files are never
-          uploaded or stored.
-        </CardDescription>
+        <CardTitle id="recent-h">{t('recent.title')}</CardTitle>
+        <CardDescription>{t('recent.description')}</CardDescription>
       </CardHeader>
       <ul className="recent-list">
         {sessions.map((s) => {
@@ -48,16 +46,21 @@ export function RecentSessions({ sessions, onOpen, onDelete, openingFingerprint,
                 className="recent-open"
                 disabled={busy}
                 aria-busy={opening || undefined}
-                aria-label={`${direct ? 'Open' : 'Pick file to resume'} ${s.fileName}`}
+                aria-label={direct ? t('aria.openSession', { name: s.fileName }) : t('aria.pickSession', { name: s.fileName })}
                 onClick={() => onOpen(s)}
               >
                 <span className="recent-main">
                   <span className="recent-name truncate" title={s.fileName}>{s.fileName}</span>
                   <span className="muted truncate">
-                    {s.segments.length} segment{s.segments.length === 1 ? '' : 's'}
-                    {s.duration > 0 && <> · {formatTime(s.duration, false)}</>}
+                    {t('recent.segments', { count: s.segments.length })}
+                    {s.duration > 0 && (
+                      <>
+                        {' · '}
+                        <bdi dir="ltr">{formatTime(s.duration, false)}</bdi>
+                      </>
+                    )}
                     {' · '}
-                    {formatRelative(s.updatedAt)}
+                    {formatRelative(s.updatedAt, i18n.language) ?? t('recent.unknownDate')}
                   </span>
                 </span>
                 <span className="recent-hint" aria-hidden="true">
@@ -65,20 +68,20 @@ export function RecentSessions({ sessions, onOpen, onDelete, openingFingerprint,
                     <Loader2Icon className="spin" />
                   ) : direct ? (
                     <>
-                      Open <ChevronRightIcon />
+                      {t('recent.open')} <ChevronRightIcon className="flip-rtl" />
                     </>
                   ) : (
                     <>
-                      Pick file… <FolderOpenIcon />
+                      {t('recent.pickFile')} <FolderOpenIcon />
                     </>
                   )}
                 </span>
               </button>
-              <Tip label="Delete session">
+              <Tip label={t('recent.delete')}>
                 <Button
                   data-variant="ghost-destructive"
                   data-size="icon"
-                  aria-label={`Delete session for ${s.fileName}`}
+                  aria-label={t('aria.deleteSession', { name: s.fileName })}
                   disabled={busy}
                   focusableWhenDisabled
                   onClick={(e) => {

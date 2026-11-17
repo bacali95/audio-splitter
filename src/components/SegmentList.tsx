@@ -2,10 +2,11 @@ import { Button } from '@ui-sdk/react/button'
 import { Input } from '@ui-sdk/react/input'
 import { AlertTriangleIcon, CrosshairIcon, PlayIcon, Trash2Icon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { segmentColor, sortSegments } from '../lib/colors'
 import { defaultSegmentName, validateName } from '../lib/names'
 import type { Segment } from '../lib/storage'
-import { clamp, formatTime, parseTime, validateRange } from '../lib/time'
+import { clamp, formatTime, parseTime, validateRange, type RangeError } from '../lib/time'
 import { Badge, Card, CardHeader, CardTitle, Swatch, Tip } from './ui'
 
 interface Props {
@@ -30,16 +31,18 @@ function TimeField({
 }: {
   value: number
   label: string
-  /** Returns an error message for a candidate value, or null if it is acceptable. */
-  validate: (v: number) => string | null
+  /** Returns an error code for a candidate value, or null if it is acceptable. */
+  validate: (v: number) => RangeError | null
   onCommit: (v: number) => void
 }) {
+  const { t } = useTranslation()
   const [draft, setDraft] = useState(formatTime(value))
   useEffect(() => setDraft(formatTime(value)), [value])
 
   const parsed = parseTime(draft)
   const dirty = draft !== formatTime(value)
-  const error = !dirty ? null : parsed === null ? 'Use HH:MM:SS.mmm' : validate(parsed)
+  const errorCode = !dirty ? null : parsed === null ? 'format' : validate(parsed)
+  const error = errorCode === null ? null : errorCode === 'format' ? t('errors.timeFormat') : t(`errors.range.${errorCode}`)
 
   const revert = () => setDraft(formatTime(value))
   const commit = (): boolean => {
@@ -52,7 +55,8 @@ function TimeField({
   return (
     <>
       <Input
-        className="mono"
+        className="mono ltr-field"
+        dir="ltr"
         aria-label={label}
         aria-invalid={error ? true : undefined}
         title={error ?? undefined}
@@ -89,6 +93,7 @@ export function SegmentList({
   onPlay,
   onJump,
 }: Props) {
+  const { t } = useTranslation()
   const sorted = useMemo(() => sortSegments(segments), [segments])
   const overlaps = useMemo(() => {
     const set = new Set<string>()
@@ -109,35 +114,39 @@ export function SegmentList({
   return (
     <Card flush>
       <CardHeader bordered>
-        <CardTitle>Segments</CardTitle>
+        <CardTitle>{t('segments.title')}</CardTitle>
         <Badge variant="secondary">{sorted.length}</Badge>
         {overlaps.size > 0 && (
-          <Badge variant="warning" title="Some segments overlap; exports will contain the shared audio twice">
-            <AlertTriangleIcon aria-hidden="true" /> {overlaps.size} overlapping
+          <Badge variant="warning" title={t('segments.overlapWarning')}>
+            <AlertTriangleIcon aria-hidden="true" /> {t('segments.overlapping', { count: overlaps.size })}
           </Badge>
         )}
       </CardHeader>
 
       {sorted.length === 0 ? (
         <div className="seg-empty">
-          <p>No segments yet.</p>
+          <p>{t('segments.empty.title')}</p>
           <p className="muted">
-            Drag on the waveform, or press <kbd>[</kbd> to set a start and <kbd>]</kbd> to set an end at the playhead.
+            <Trans
+              i18nKey="segments.empty.hint"
+              components={{ startKey: <kbd dir="ltr">[</kbd>, endKey: <kbd dir="ltr">]</kbd> }}
+            />
           </p>
         </div>
       ) : (
         <>
           <div className="seg-head" aria-hidden="true">
-            <span style={{ gridArea: 'idx' }}>#</span>
-            <span style={{ gridArea: 'name' }}>Name</span>
-            <span style={{ gridArea: 'start' }}>Start</span>
-            <span style={{ gridArea: 'end' }}>End</span>
-            <span style={{ gridArea: 'len' }}>Length</span>
+            <span style={{ gridArea: 'idx' }}>{t('segments.columns.index')}</span>
+            <span style={{ gridArea: 'name' }}>{t('segments.columns.name')}</span>
+            <span style={{ gridArea: 'start' }}>{t('segments.columns.start')}</span>
+            <span style={{ gridArea: 'end' }}>{t('segments.columns.end')}</span>
+            <span style={{ gridArea: 'len' }}>{t('segments.columns.length')}</span>
           </div>
           <ol className="seg-list">
             {sorted.map((s, i) => {
               const active = s.id === activeId
-              const nameError = s.name ? validateName(s.name) : null
+              const nameCode = s.name ? validateName(s.name) : null
+              const nameError = nameCode ? t(`errors.name.${nameCode}`) : null
               return (
                 <li
                   key={s.id}
@@ -157,7 +166,7 @@ export function SegmentList({
                   </span>
                   <div style={{ gridArea: 'name' }} className="seg-cell">
                     <Input
-                      aria-label={`Name of segment ${i + 1}`}
+                      aria-label={t('aria.segmentName', { n: i + 1 })}
                       aria-invalid={nameError ? true : undefined}
                       title={nameError ?? undefined}
                       placeholder={defaultSegmentName(baseName, i)}
@@ -168,7 +177,7 @@ export function SegmentList({
                   </div>
                   <div style={{ gridArea: 'start' }} className="seg-cell">
                     <TimeField
-                      label={`Segment ${i + 1} start`}
+                      label={t('aria.segmentStart', { n: i + 1 })}
                       value={s.start}
                       validate={(v) => validateRange(clamp(v, 0, duration), s.end, duration)}
                       onCommit={(v) => onUpdate(s.id, clamp(v, 0, duration), s.end)}
@@ -176,35 +185,35 @@ export function SegmentList({
                   </div>
                   <div style={{ gridArea: 'end' }} className="seg-cell">
                     <TimeField
-                      label={`Segment ${i + 1} end`}
+                      label={t('aria.segmentEnd', { n: i + 1 })}
                       value={s.end}
                       validate={(v) => validateRange(s.start, clamp(v, 0, duration), duration)}
                       onCommit={(v) => onUpdate(s.id, s.start, clamp(v, 0, duration))}
                     />
                   </div>
-                  <span style={{ gridArea: 'len' }} className="seg-len mono muted">
+                  <span style={{ gridArea: 'len' }} className="seg-len mono muted" dir="ltr">
                     {formatTime(s.end - s.start)}
                     {overlaps.has(s.id) && (
-                      <Tip label="Overlaps another segment">
-                        <span className="seg-overlap" tabIndex={0} role="img" aria-label="Overlaps another segment">
+                      <Tip label={t('segments.overlapTip')}>
+                        <span className="seg-overlap" tabIndex={0} role="img" aria-label={t('segments.overlapTip')}>
                           <AlertTriangleIcon aria-hidden="true" />
                         </span>
                       </Tip>
                     )}
                   </span>
                   <span style={{ gridArea: 'act' }} className="seg-actions">
-                    <Tip label="Play segment">
-                      <Button data-variant="ghost" data-size="icon" aria-label={`Play segment ${i + 1}`} onClick={() => onPlay(s.id)}>
+                    <Tip label={t('segments.play')}>
+                      <Button data-variant="ghost" data-size="icon" aria-label={t('aria.playSegment', { n: i + 1 })} onClick={() => onPlay(s.id)}>
                         <PlayIcon aria-hidden="true" />
                       </Button>
                     </Tip>
-                    <Tip label="Jump to start">
-                      <Button data-variant="ghost" data-size="icon" aria-label={`Jump to start of segment ${i + 1}`} onClick={() => onJump(s.start)}>
+                    <Tip label={t('segments.jump')}>
+                      <Button data-variant="ghost" data-size="icon" aria-label={t('aria.jumpToSegmentStart', { n: i + 1 })} onClick={() => onJump(s.start)}>
                         <CrosshairIcon aria-hidden="true" />
                       </Button>
                     </Tip>
-                    <Tip label="Delete segment (Del)">
-                      <Button data-variant="ghost-destructive" data-size="icon" aria-label={`Delete segment ${i + 1}`} onClick={() => onDelete(s.id)}>
+                    <Tip label={t('segments.deleteTip', { key: t('shortcuts.keys.del') })}>
+                      <Button data-variant="ghost-destructive" data-size="icon" aria-label={t('aria.deleteSegment', { n: i + 1 })} onClick={() => onDelete(s.id)}>
                         <Trash2Icon aria-hidden="true" />
                       </Button>
                     </Tip>

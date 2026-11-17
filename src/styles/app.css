@@ -5,6 +5,19 @@
 /* One centred container shared by the header and the main area. */
 .container { width: 100%; max-width: 1100px; margin-inline: auto; padding-inline: 1rem; }
 
+/* ---- Internationalisation ---- */
+/* Timecodes, clocks and the waveform always read left to right; isolate them from the surrounding text. */
+.ltr-field, [dir="ltr"].mono { unicode-bidi: isolate; text-align: start; }
+/* Icons that point along the reading direction mirror in RTL. */
+[dir="rtl"] .flip-rtl { transform: scaleX(-1); }
+:root { --dir: 1; }
+:root[dir="rtl"] { --dir: -1; }
+
+/* Language switcher: icon + native name on wide screens, icon + code on narrow ones. */
+.lang-trigger { min-width: 0; }
+.lang-trigger .lang-code { display: none; text-transform: uppercase; font-size: 0.6875rem; font-weight: 500; }
+.lang-trigger > svg:first-child { color: var(--muted-foreground); }
+
 /* ---- Header ---- */
 .app-header {
   position: sticky;
@@ -26,10 +39,10 @@
 .brand-name { font-size: 0.875rem; font-weight: 600; letter-spacing: -0.01em; }
 .file-info {
   display: flex; align-items: center; gap: 0.5rem; flex: 1 1 8rem; min-width: 0;
-  padding-left: 0.75rem; border-left: 1px solid var(--border);
+  padding-inline-start: 0.75rem; border-inline-start: 1px solid var(--border);
 }
 .file-name { color: var(--muted-foreground); font-weight: 500; }
-.header-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-left: auto; }
+.header-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-inline-start: auto; }
 .header-actions [data-slot="file-input"] { display: contents; }
 
 .app-main { flex: 1; padding-block: 1.25rem 2rem; }
@@ -63,12 +76,12 @@
 .dropzone[data-disabled] { opacity: 0.5; }
 
 .recent-list { list-style: none; margin: 0; padding: 0; }
-.recent-item { position: relative; display: flex; align-items: center; gap: 0.5rem; padding: 0 0.75rem 0 0; border-bottom: 1px solid var(--border); transition: background-color 0.15s; }
+.recent-item { position: relative; display: flex; align-items: center; gap: 0.5rem; padding-block: 0; padding-inline: 0 0.75rem; border-bottom: 1px solid var(--border); transition: background-color 0.15s; }
 .recent-item:last-child { border-bottom: 0; }
 .recent-item:hover, .recent-item[data-expected] { background: color-mix(in oklch, var(--accent) 50%, transparent); }
 .recent-open {
-  flex: 1; min-width: 0; display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0 0.5rem 0.75rem;
-  background: none; border: 0; border-radius: 0; color: inherit; font: inherit; text-align: left; cursor: pointer;
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 0.75rem; padding-block: 0.5rem; padding-inline: 0.75rem 0;
+  background: none; border: 0; border-radius: 0; color: inherit; font: inherit; text-align: start; cursor: pointer;
 }
 .recent-open:focus-visible { outline: 0; box-shadow: inset 0 0 0 2px var(--ring), inset 0 0 0 4px var(--focus-ring); }
 .recent-open:disabled { cursor: default; }
@@ -95,16 +108,18 @@
 }
 .transport-bar [data-slot="toolbar-group"] { display: flex; align-items: center; gap: 0.25rem; padding: 0; }
 .clock { font-size: 0.8125rem; white-space: nowrap; padding-inline: 0.25rem; }
-.transport-end { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-left: auto; }
+.transport-end { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; margin-inline-start: auto; flex: 1 1 18rem; min-width: 0; }
+/* Numbers like "1.25×" must not be reordered by RTL bidi. */
+.speed-trigger [data-slot="select-value"], .speed-content [data-slot="select-item"] { direction: ltr; unicode-bidi: isolate; }
 .speed-trigger { width: 4.5rem; }
-.slider-ctl { display: flex; align-items: center; gap: 0.5rem; width: 9.5rem; color: var(--muted-foreground); }
+.slider-ctl { display: flex; align-items: center; gap: 0.5rem; flex: 0 1 9.5rem; min-width: 5.5rem; color: var(--muted-foreground); }
 .slider-ctl > svg { width: 0.875rem; height: 0.875rem; flex-shrink: 0; }
-.slider-ctl-volume { width: 7rem; gap: 0.25rem; }
+.slider-ctl-volume { flex-basis: 7rem; min-width: 4.5rem; gap: 0.25rem; }
 .slider-ctl [data-slot="slider"] { flex: 1; }
 
 .pending-chip {
   display: flex; align-items: center; gap: 0.5rem; width: fit-content; max-width: 100%;
-  margin-top: 0.5rem; padding: 0.125rem 0.25rem 0.125rem 0.625rem;
+  margin-top: 0.5rem; padding-block: 0.125rem; padding-inline: 0.625rem 0.25rem;
   border-radius: var(--radius-md);
   background: color-mix(in oklch, var(--primary) 8%, transparent);
   box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--primary) 25%, transparent);
@@ -135,10 +150,15 @@
 }
 .seg-head { padding-block: 0.375rem; border-bottom: 1px solid var(--border); color: var(--muted-foreground); font-weight: 500; }
 .seg-list { list-style: none; margin: 0; padding: 0; max-height: min(28rem, 55vh); overflow-y: auto; }
-.seg { border-bottom: 1px solid var(--border); box-shadow: inset 3px 0 0 transparent; transition: background-color 0.15s, box-shadow 0.15s; }
+.seg {
+  border-bottom: 1px solid var(--border);
+  border-inline-start: 3px solid transparent;
+  padding-inline-start: calc(0.75rem - 3px);
+  transition: background-color 0.15s, border-color 0.15s;
+}
 .seg:last-child { border-bottom: 0; }
 .seg:hover { background: color-mix(in oklch, var(--accent) 50%, transparent); }
-.seg[data-active] { background: var(--accent); box-shadow: inset 3px 0 0 var(--seg-color); }
+.seg[data-active] { background: var(--accent); border-inline-start-color: var(--seg-color); }
 .seg-idx { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 500; }
 .seg-cell { min-width: 0; }
 .seg-len { display: inline-flex; align-items: center; gap: 0.375rem; white-space: nowrap; }
@@ -178,8 +198,10 @@
 
 /* ---- Narrow screens ---- */
 @media (max-width: 760px) {
-  .file-info { order: 3; flex-basis: 100%; padding-left: 0; border-left: 0; }
-  .transport-end { margin-left: 0; width: 100%; }
+  .lang-trigger .lang-name { display: none; }
+  .lang-trigger .lang-code { display: inline; }
+  .file-info { order: 3; flex-basis: 100%; padding-inline-start: 0; border-inline-start: 0; }
+  .transport-end { margin-inline-start: 0; width: 100%; }
   .seg-head { display: none; }
   .seg {
     grid-template-columns: 2.75rem 1fr 1fr;

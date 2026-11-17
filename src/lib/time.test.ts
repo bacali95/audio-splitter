@@ -43,23 +43,29 @@ describe('parseTime', () => {
 describe('validateRange', () => {
   it('accepts valid ranges', () => expect(validateRange(1, 2, 10)).toBeNull())
   it('rejects end <= start', () => {
-    expect(validateRange(2, 2, 10)).not.toBeNull()
-    expect(validateRange(3, 2, 10)).not.toBeNull()
+    expect(validateRange(2, 2, 10)).toBe('endBeforeStart')
+    expect(validateRange(3, 2, 10)).toBe('endBeforeStart')
   })
-  it('rejects past duration', () => expect(validateRange(1, 11, 10)).not.toBeNull())
+  it('rejects past duration', () => expect(validateRange(1, 11, 10)).toBe('endPastFile'))
+  it('rejects negative start', () => expect(validateRange(-1, 2, 10)).toBe('startNegative'))
 })
 
 describe('formatRelative', () => {
   const now = Date.UTC(2026, 0, 15, 12, 0, 0)
   it('handles recent, minutes, hours and days', () => {
-    expect(formatRelative(now - 10_000, now)).toBe('just now')
-    expect(formatRelative(now - 5 * 60_000, now)).toBe('5 minutes ago')
-    expect(formatRelative(now - 3 * 3600_000, now)).toBe('3 hours ago')
-    expect(formatRelative(now - 86400_000, now)).toBe('yesterday')
-    expect(formatRelative(now - 3 * 86400_000, now)).toBe('3 days ago')
+    expect(formatRelative(now - 10_000, 'en', now)).toBe('now')
+    expect(formatRelative(now - 5 * 60_000, 'en', now)).toBe('5 minutes ago')
+    expect(formatRelative(now - 3 * 3600_000, 'en', now)).toBe('3 hours ago')
+    expect(formatRelative(now - 86400_000, 'en', now)).toBe('yesterday')
+    expect(formatRelative(now - 3 * 86400_000, 'en', now)).toBe('3 days ago')
   })
-  it('falls back for missing or old timestamps', () => {
-    expect(formatRelative(0, now)).toBe('unknown date')
-    expect(formatRelative(now - 90 * 86400_000, now)).toMatch(/2025/)
+  it('is localised', () => {
+    expect(formatRelative(now - 86400_000, 'fr', now)).toBe('hier')
+    expect(formatRelative(now - 3 * 3600_000, 'de', now)).toBe('vor 3 Stunden')
+    expect(formatRelative(now - 5 * 60_000, 'ar', now)).toMatch(/5/)
+  })
+  it('returns null for missing timestamps and a date when old', () => {
+    expect(formatRelative(0, 'en', now)).toBeNull()
+    expect(formatRelative(now - 90 * 86400_000, 'en', now)).toMatch(/2025/)
   })
 })

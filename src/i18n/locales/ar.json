@@ -1,0 +1,233 @@
+{
+  "app": {
+    "title": "Audio Splitter"
+  },
+  "header": {
+    "close": "إغلاق",
+    "export": "إنهاء وتصدير",
+    "exportHint": "أضف مقطعًا واحدًا على الأقل",
+    "loadAnother": "تحميل ملف آخر"
+  },
+  "language": {
+    "label": "اللغة"
+  },
+  "dropzone": {
+    "title": "أفلت ملفًا صوتيًا هنا",
+    "hint": "{{formats}}. تبقى الملفات على حاسوبك.",
+    "browse": "استعراض الملفات"
+  },
+  "filePicker": {
+    "description": "صوت"
+  },
+  "loading": {
+    "description": "عند فتح ملف لأول مرة تُحسب موجته الصوتية محليًا (يستغرق ملف مدته ساعتان دقيقة أو دقيقتين). ثم تُخزَّن مؤقتًا للمرة القادمة.",
+    "analysing": "جارٍ تحليل الصوت",
+    "stage": {
+      "fingerprint": "جارٍ حساب بصمة الملف…",
+      "metadata": "جارٍ قراءة البيانات الوصفية للصوت…",
+      "ffmpeg": "جارٍ تحميل ffmpeg…",
+      "analysing": "جارٍ تحليل الصوت…"
+    }
+  },
+  "recent": {
+    "title": "الجلسات الأخيرة",
+    "description": "تُحفظ مقاطعك في هذا المتصفح. انقر على جلسة لاستئنافها: في متصفحات Chromium يُعاد فتح الملف مباشرة، وفي المتصفحات الأخرى سيُطلب منك اختيار الملف الصوتي نفسه مرة أخرى. لا تُرفع الملفات ولا تُخزَّن أبدًا.",
+    "segments_zero": "لا مقاطع",
+    "segments_one": "مقطع واحد",
+    "segments_two": "مقطعان",
+    "segments_few": "{{count}} مقاطع",
+    "segments_many": "{{count}} مقطعًا",
+    "segments_other": "{{count}} مقطع",
+    "open": "فتح",
+    "pickFile": "اختيار الملف…",
+    "delete": "حذف الجلسة",
+    "unknownDate": "تاريخ غير معروف"
+  },
+  "transport": {
+    "backTip": "رجوع 5 ث (←)",
+    "forwardTip": "تقدم 5 ث (→)",
+    "play": "تشغيل",
+    "pause": "إيقاف مؤقت",
+    "playTip": "تشغيل ({{key}})",
+    "pauseTip": "إيقاف مؤقت ({{key}})",
+    "markStart": "تحديد البداية",
+    "markStartTip": "تعيين بداية المقطع عند مؤشر التشغيل ( [ )",
+    "markEnd": "تحديد النهاية",
+    "markEndTip": "تعيين نهاية المقطع عند مؤشر التشغيل ( ] )",
+    "markEndNeedsStart": "حدّد البداية أولًا",
+    "mute": "كتم الصوت",
+    "unmute": "إلغاء الكتم",
+    "speedValue": "{{value}}×",
+    "pending": "عُيّنت البداية عند <time>{{time}}</time> — اضغط <endKey/> أو <strong>تحديد النهاية</strong>",
+    "cancelPendingTip": "إلغاء ({{key}})"
+  },
+  "shortcuts": {
+    "button": "الاختصارات",
+    "title": "اختصارات لوحة المفاتيح",
+    "keys": {
+      "space": "مسافة",
+      "shiftLeft": "Shift + ←",
+      "shiftRight": "Shift + →",
+      "delete": "حذف",
+      "del": "حذف",
+      "backspace": "مسح للخلف",
+      "esc": "Esc",
+      "ctrlWheel": "Ctrl/⌘ + عجلة التمرير",
+      "dragWaveform": "السحب على الموجة الصوتية",
+      "clickWaveform": "النقر على الموجة الصوتية"
+    },
+    "playPause": "تشغيل / إيقاف مؤقت",
+    "seek5": "تنقّل 5 ثوانٍ",
+    "seek30": "تنقّل 30 ثانية",
+    "markStart": "تحديد بداية المقطع",
+    "markEnd": "تحديد النهاية وإنشاء المقطع",
+    "deleteSegment": "حذف المقطع المحدد",
+    "clearSelection": "مسح التحديد والبداية",
+    "zoom": "تكبير الموجة الصوتية",
+    "createByDrag": "إنشاء مقطع",
+    "seekByClick": "الانتقال إلى موضع"
+  },
+  "waveform": {
+    "startMarker": "البداية"
+  },
+  "segments": {
+    "title": "المقاطع",
+    "overlapping_zero": "لا مقاطع متداخلة",
+    "overlapping_one": "مقطع واحد متداخل",
+    "overlapping_two": "مقطعان متداخلان",
+    "overlapping_few": "{{count}} مقاطع متداخلة",
+    "overlapping_many": "{{count}} مقطعًا متداخلًا",
+    "overlapping_other": "{{count}} مقطع متداخل",
+    "overlapWarning": "بعض المقاطع متداخلة؛ ستحتوي الملفات المصدَّرة على الصوت المشترك مرتين",
+    "overlapTip": "يتداخل مع مقطع آخر",
+    "empty": {
+      "title": "لا توجد مقاطع بعد.",
+      "hint": "اسحب على الموجة الصوتية، أو اضغط <startKey/> لتعيين البداية و<endKey/> لتعيين النهاية عند مؤشر التشغيل."
+    },
+    "columns": {
+      "index": "#",
+      "name": "الاسم",
+      "start": "البداية",
+      "end": "النهاية",
+      "length": "المدة"
+    },
+    "play": "تشغيل المقطع",
+    "jump": "الانتقال إلى البداية",
+    "deleteTip": "حذف المقطع ({{key}})"
+  },
+  "export": {
+    "dialog": {
+      "title_zero": "تصدير مقاطع",
+      "title_one": "تصدير مقطع واحد",
+      "title_two": "تصدير مقطعين",
+      "title_few": "تصدير {{count}} مقاطع",
+      "title_many": "تصدير {{count}} مقطعًا",
+      "title_other": "تصدير {{count}} مقطع",
+      "descriptionFolder": "سمِّ كل ملف. يُحتفظ بالامتداد <ext>{{ext}}</ext> من الملف الأصلي. سيُطلب منك اختيار مجلد الوجهة.",
+      "descriptionZip": "سمِّ كل ملف. يُحتفظ بالامتداد <ext>{{ext}}</ext> من الملف الأصلي. تُجمَّع الملفات في تنزيل بصيغة ZIP.",
+      "noExtension": "(بلا امتداد)"
+    },
+    "reencode": {
+      "label": "إعادة الترميز لقص دقيق على مستوى العينة",
+      "default": "أبطأ وبفقدان في الجودة. النسخ المباشر للتدفق (الافتراضي) بلا فقدان ويقص عند حدود الإطارات الصوتية (من 20 إلى 30 ملّي ثانية تقريبًا).",
+      "wav": "WAV بصيغة PCM: النسخ المباشر للتدفق دقيق أصلًا على مستوى العينة.",
+      "unsupportedFormat": "إعادة الترميز غير متاحة لملفات «{{ext}}».",
+      "checkFailed": "تعذّر التحقق من توفر المرمِّزات.",
+      "checking": "جارٍ التحقق من المرمِّزات…",
+      "missingEncoder": "المرمِّز الخاص بهذه الصيغة غير موجود في إصدار ffmpeg هذا."
+    },
+    "progress": "جارٍ تصدير {{current}} من {{total}}",
+    "exporting": "جارٍ التصدير…",
+    "chooseFolder": "اختيار مجلد وتصدير",
+    "downloadZip": "تنزيل ZIP",
+    "cancel": "إلغاء",
+    "done": "تم",
+    "failed": "فشل",
+    "failedWith": "فشل: {{error}}",
+    "unknownError": "خطأ غير معروف",
+    "success": {
+      "title": "اكتمل التصدير",
+      "description": "مقاطعك جاهزة.",
+      "folderTitle_zero": "لم يُصدَّر أي ملف إلى {{folder}}",
+      "folderTitle_one": "صُدِّر ملف واحد إلى {{folder}}",
+      "folderTitle_two": "صُدِّر ملفان إلى {{folder}}",
+      "folderTitle_few": "صُدِّرت {{count}} ملفات إلى {{folder}}",
+      "folderTitle_many": "صُدِّر {{count}} ملفًا إلى {{folder}}",
+      "folderTitle_other": "صُدِّر {{count}} ملف إلى {{folder}}",
+      "folderFallback": "المجلد المختار",
+      "folderBody": "كُتبت الملفات مباشرة في المجلد الذي اخترته.",
+      "zipTitle": "تم تنزيل ZIP",
+      "zipBody_zero": "لا ملفات في {{zip}}.",
+      "zipBody_one": "جُمع ملف واحد في {{zip}}.",
+      "zipBody_two": "جُمع ملفان في {{zip}}.",
+      "zipBody_few": "جُمعت {{count}} ملفات في {{zip}}.",
+      "zipBody_many": "جُمع {{count}} ملفًا في {{zip}}.",
+      "zipBody_other": "جُمع {{count}} ملف في {{zip}}."
+    }
+  },
+  "toast": {
+    "restored_zero": "لم تُستعد أي مقاطع",
+    "restored_one": "استُعيد مقطع واحد",
+    "restored_two": "استُعيد مقطعان",
+    "restored_few": "استُعيدت {{count}} مقاطع",
+    "restored_many": "استُعيد {{count}} مقطعًا",
+    "restored_other": "استُعيد {{count}} مقطع",
+    "differentFile": "هذا ملف مختلف عن {{expected}}",
+    "differentFileDescription": "بدأت جلسة جديدة للملف {{name}}.",
+    "loadFailed": "تعذّر تحميل الملف",
+    "startFirst": "حدّد البداية أولًا",
+    "startFirstDescription": "اضغط [ أو «تحديد البداية».",
+    "endAfterStart": "يجب أن تكون النهاية بعد البداية",
+    "endAfterStartDescription": "البداية عند {{time}}. حرّك مؤشر التشغيل إلى موضع أبعد وحاول مرة أخرى.",
+    "segmentDeleted": "حُذف المقطع {{n}}",
+    "undo": "تراجع",
+    "pickToResume": "اختر {{name}} للاستئناف",
+    "pickFile": "اختيار الملف",
+    "cantAccess": "تعذّر الوصول إلى {{name}} — اختره مرة أخرى",
+    "unsupportedType": "نوع الملف هذا غير مدعوم",
+    "pickerFailed": "تعذّر فتح أداة اختيار الملفات",
+    "folderFailed": "تعذّر فتح المجلد: {{message}}",
+    "exportFailed": "فشل التصدير"
+  },
+  "errors": {
+    "timeFormat": "استخدم HH:MM:SS.mmm",
+    "unplayable": "لا يستطيع هذا المتصفح تشغيل هذا الملف (ترميز غير مدعوم أو ملف تالف).",
+    "ffmpegExit": "انتهى ffmpeg بالرمز {{code}}: {{log}}",
+    "pickerUnavailable": "أداة اختيار الملفات غير متاحة في هذا المتصفح.",
+    "name": {
+      "required": "الاسم مطلوب",
+      "forbiddenChars": "يجب ألا يحتوي على \\ / : * ? \" < > |",
+      "invalid": "اسم غير صالح",
+      "tooLong": "الاسم طويل جدًا",
+      "duplicate": "اسم مكرر"
+    },
+    "range": {
+      "endBeforeStart": "يجب أن تكون النهاية بعد البداية",
+      "startNegative": "يجب أن تكون البداية >= 0",
+      "endPastFile": "النهاية تتجاوز نهاية الملف"
+    }
+  },
+  "aria": {
+    "transport": "عناصر التحكم في التشغيل",
+    "playback": "التشغيل",
+    "segment": "المقطع",
+    "back5": "رجوع 5 ثوانٍ",
+    "forward5": "تقدم 5 ثوانٍ",
+    "clock": "الوقت الحالي والمدة",
+    "playbackSpeed": "سرعة التشغيل",
+    "zoom": "التكبير",
+    "volume": "مستوى الصوت",
+    "cancelPending": "إلغاء البداية المعلقة",
+    "close": "إغلاق",
+    "segmentName": "اسم المقطع {{n}}",
+    "segmentStart": "بداية المقطع {{n}}",
+    "segmentEnd": "نهاية المقطع {{n}}",
+    "playSegment": "تشغيل المقطع {{n}}",
+    "jumpToSegmentStart": "الانتقال إلى بداية المقطع {{n}}",
+    "deleteSegment": "حذف المقطع {{n}}",
+    "exportFileName": "اسم ملف المقطع {{n}}",
+    "openSession": "فتح {{name}}",
+    "pickSession": "اختيار ملف لاستئناف {{name}}",
+    "deleteSession": "حذف جلسة {{name}}"
+  }
+}

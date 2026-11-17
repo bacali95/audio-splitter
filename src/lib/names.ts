@@ -13,21 +13,24 @@ export function defaultSegmentName(originalBase: string, index: number): string 
   return `${originalBase}_${String(index + 1).padStart(2, '0')}`
 }
 
-/** Validate one name in isolation. Returns an error message or null. */
-export function validateName(name: string): string | null {
+/** Why a file name is not acceptable. The UI maps each code to `errors.name.<code>`. */
+export type NameError = 'required' | 'forbiddenChars' | 'invalid' | 'tooLong' | 'duplicate'
+
+/** Validate one name in isolation. Returns an error code or null. */
+export function validateName(name: string): NameError | null {
   const n = name.trim()
-  if (!n) return 'Name is required'
-  if (FORBIDDEN_CHARS.test(n) || CONTROL_CHARS.test(n)) return 'Must not contain \\ / : * ? " < > |'
-  if (n === '.' || n === '..') return 'Invalid name'
-  if (n.length > 200) return 'Too long'
+  if (!n) return 'required'
+  if (FORBIDDEN_CHARS.test(n) || CONTROL_CHARS.test(n)) return 'forbiddenChars'
+  if (n === '.' || n === '..') return 'invalid'
+  if (n.length > 200) return 'tooLong'
   return null
 }
 
 /**
  * Validate a list of names (case-insensitive duplicate detection).
- * Returns an array of the same length: error message or null per entry.
+ * Returns an array of the same length: error code or null per entry.
  */
-export function validateNames(names: string[]): (string | null)[] {
+export function validateNames(names: string[]): (NameError | null)[] {
   const counts = new Map<string, number>()
   for (const n of names) {
     const k = n.trim().toLowerCase()
@@ -36,7 +39,7 @@ export function validateNames(names: string[]): (string | null)[] {
   return names.map((n) => {
     const single = validateName(n)
     if (single) return single
-    if ((counts.get(n.trim().toLowerCase()) ?? 0) > 1) return 'Duplicate name'
+    if ((counts.get(n.trim().toLowerCase()) ?? 0) > 1) return 'duplicate'
     return null
   })
 }

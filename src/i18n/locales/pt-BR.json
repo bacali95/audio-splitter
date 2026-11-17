@@ -1,0 +1,215 @@
+{
+  "app": {
+    "title": "Audio Splitter"
+  },
+  "header": {
+    "close": "Fechar",
+    "export": "Concluir e exportar",
+    "exportHint": "Adicione pelo menos um segmento",
+    "loadAnother": "Outro arquivo"
+  },
+  "language": {
+    "label": "Idioma"
+  },
+  "dropzone": {
+    "title": "Solte um arquivo de áudio aqui",
+    "hint": "{{formats}}. Os arquivos permanecem no seu computador.",
+    "browse": "Procurar arquivos"
+  },
+  "filePicker": {
+    "description": "Áudio"
+  },
+  "loading": {
+    "description": "Na primeira vez que um arquivo é aberto, sua forma de onda é calculada localmente (um arquivo de 2 horas leva um ou dois minutos). Ela fica em cache para as próximas vezes.",
+    "analysing": "Analisando áudio",
+    "stage": {
+      "fingerprint": "Gerando impressão digital do arquivo…",
+      "metadata": "Lendo metadados do áudio…",
+      "ffmpeg": "Carregando ffmpeg…",
+      "analysing": "Analisando áudio…"
+    }
+  },
+  "recent": {
+    "title": "Sessões recentes",
+    "description": "Seus segmentos são salvos neste navegador. Clique em uma sessão para retomá-la: em navegadores Chromium o arquivo é reaberto diretamente; em outros navegadores você precisará selecionar o mesmo arquivo de áudio novamente. Os arquivos nunca são enviados nem armazenados.",
+    "segments_one": "{{count}} segmento",
+    "segments_many": "{{count}} segmentos",
+    "segments_other": "{{count}} segmentos",
+    "open": "Abrir",
+    "pickFile": "Escolher arquivo…",
+    "delete": "Excluir sessão",
+    "unknownDate": "data desconhecida"
+  },
+  "transport": {
+    "backTip": "Voltar 5 s (←)",
+    "forwardTip": "Avançar 5 s (→)",
+    "play": "Reproduzir",
+    "pause": "Pausar",
+    "playTip": "Reproduzir ({{key}})",
+    "pauseTip": "Pausar ({{key}})",
+    "markStart": "Marcar início",
+    "markStartTip": "Definir o início do segmento no cursor de reprodução ( [ )",
+    "markEnd": "Marcar fim",
+    "markEndTip": "Definir o fim do segmento no cursor de reprodução ( ] )",
+    "markEndNeedsStart": "Defina um início primeiro",
+    "mute": "Silenciar",
+    "unmute": "Ativar som",
+    "speedValue": "{{value}}×",
+    "pending": "Início definido em <time>{{time}}</time> — pressione <endKey/> ou <strong>Marcar fim</strong>",
+    "cancelPendingTip": "Cancelar ({{key}})"
+  },
+  "shortcuts": {
+    "button": "Atalhos",
+    "title": "Atalhos de teclado",
+    "keys": {
+      "space": "Espaço",
+      "shiftLeft": "Shift + ←",
+      "shiftRight": "Shift + →",
+      "delete": "Delete",
+      "del": "Del",
+      "backspace": "Backspace",
+      "esc": "Esc",
+      "ctrlWheel": "Ctrl/⌘ + roda do mouse",
+      "dragWaveform": "Arrastar na forma de onda",
+      "clickWaveform": "Clicar na forma de onda"
+    },
+    "playPause": "Reproduzir / pausar",
+    "seek5": "Avançar/voltar 5 s",
+    "seek30": "Avançar/voltar 30 s",
+    "markStart": "Marcar início do segmento",
+    "markEnd": "Marcar fim, criar segmento",
+    "deleteSegment": "Excluir segmento selecionado",
+    "clearSelection": "Limpar seleção e início",
+    "zoom": "Zoom da forma de onda",
+    "createByDrag": "Criar um segmento",
+    "seekByClick": "Ir para a posição"
+  },
+  "waveform": {
+    "startMarker": "Início"
+  },
+  "segments": {
+    "title": "Segmentos",
+    "overlapping_one": "{{count}} sobreposto",
+    "overlapping_many": "{{count}} sobrepostos",
+    "overlapping_other": "{{count}} sobrepostos",
+    "overlapWarning": "Alguns segmentos se sobrepõem; as exportações conterão o áudio compartilhado duas vezes",
+    "overlapTip": "Sobrepõe outro segmento",
+    "empty": {
+      "title": "Nenhum segmento ainda.",
+      "hint": "Arraste na forma de onda ou pressione <startKey/> para definir um início e <endKey/> para definir um fim no cursor de reprodução."
+    },
+    "columns": {
+      "index": "#",
+      "name": "Nome",
+      "start": "Início",
+      "end": "Fim",
+      "length": "Duração"
+    },
+    "play": "Reproduzir segmento",
+    "jump": "Ir para o início",
+    "deleteTip": "Excluir segmento ({{key}})"
+  },
+  "export": {
+    "dialog": {
+      "title_one": "Exportar {{count}} segmento",
+      "title_many": "Exportar {{count}} segmentos",
+      "title_other": "Exportar {{count}} segmentos",
+      "descriptionFolder": "Dê um nome a cada arquivo. A extensão <ext>{{ext}}</ext> é mantida do original. Será solicitada uma pasta de destino.",
+      "descriptionZip": "Dê um nome a cada arquivo. A extensão <ext>{{ext}}</ext> é mantida do original. Os arquivos são reunidos em um download ZIP.",
+      "noExtension": "(nenhuma)"
+    },
+    "reencode": {
+      "label": "Recodificar para cortes precisos por amostra",
+      "default": "Mais lento e com perdas. A cópia de stream (padrão) é sem perdas e corta nos limites de quadros de áudio (~20–30 ms).",
+      "wav": "WAV é PCM: a cópia de stream já é precisa por amostra.",
+      "unsupportedFormat": "A recodificação não está disponível para arquivos “{{ext}}”.",
+      "checkFailed": "Não foi possível verificar a disponibilidade do codificador.",
+      "checking": "Verificando codificadores…",
+      "missingEncoder": "O codificador para este formato não existe nesta versão do ffmpeg."
+    },
+    "progress": "Exportando {{current}} de {{total}}",
+    "exporting": "Exportando…",
+    "chooseFolder": "Escolher pasta e exportar",
+    "downloadZip": "Baixar ZIP",
+    "cancel": "Cancelar",
+    "done": "Concluído",
+    "failed": "Falhou",
+    "failedWith": "Falhou: {{error}}",
+    "unknownError": "erro desconhecido",
+    "success": {
+      "title": "Exportação concluída",
+      "description": "Seus segmentos estão prontos.",
+      "folderTitle_one": "{{count}} arquivo exportado para {{folder}}",
+      "folderTitle_many": "{{count}} arquivos exportados para {{folder}}",
+      "folderTitle_other": "{{count}} arquivos exportados para {{folder}}",
+      "folderFallback": "a pasta escolhida",
+      "folderBody": "Os arquivos foram gravados diretamente na pasta escolhida.",
+      "zipTitle": "ZIP baixado",
+      "zipBody_one": "{{count}} arquivo reunido em {{zip}}.",
+      "zipBody_many": "{{count}} arquivos reunidos em {{zip}}.",
+      "zipBody_other": "{{count}} arquivos reunidos em {{zip}}."
+    }
+  },
+  "toast": {
+    "restored_one": "{{count}} segmento restaurado",
+    "restored_many": "{{count}} segmentos restaurados",
+    "restored_other": "{{count}} segmentos restaurados",
+    "differentFile": "Este é um arquivo diferente de {{expected}}",
+    "differentFileDescription": "Nova sessão iniciada para {{name}}.",
+    "loadFailed": "Não foi possível carregar o arquivo",
+    "startFirst": "Defina um início primeiro",
+    "startFirstDescription": "Pressione [ ou “Marcar início”.",
+    "endAfterStart": "O fim deve ser depois do início",
+    "endAfterStartDescription": "O início está em {{time}}. Mova o cursor de reprodução para mais adiante e tente novamente.",
+    "segmentDeleted": "Segmento {{n}} excluído",
+    "undo": "Desfazer",
+    "pickToResume": "Escolha {{name}} para retomar",
+    "pickFile": "Escolher arquivo",
+    "cantAccess": "Não foi possível acessar {{name}} — escolha-o novamente",
+    "unsupportedType": "Este tipo de arquivo não é compatível",
+    "pickerFailed": "Não foi possível abrir o seletor de arquivos",
+    "folderFailed": "Não foi possível abrir a pasta: {{message}}",
+    "exportFailed": "Falha na exportação"
+  },
+  "errors": {
+    "timeFormat": "Use HH:MM:SS.mmm",
+    "unplayable": "Este navegador não consegue reproduzir o arquivo (codec incompatível ou arquivo corrompido).",
+    "ffmpegExit": "ffmpeg encerrou com o código {{code}}: {{log}}",
+    "pickerUnavailable": "O seletor de arquivos não está disponível neste navegador.",
+    "name": {
+      "required": "O nome é obrigatório",
+      "forbiddenChars": "Não pode conter \\ / : * ? \" < > |",
+      "invalid": "Nome inválido",
+      "tooLong": "Longo demais",
+      "duplicate": "Nome duplicado"
+    },
+    "range": {
+      "endBeforeStart": "O fim deve ser depois do início",
+      "startNegative": "O início deve ser >= 0",
+      "endPastFile": "O fim está além do final do arquivo"
+    }
+  },
+  "aria": {
+    "transport": "Controles de reprodução",
+    "playback": "Reprodução",
+    "segment": "Segmento",
+    "back5": "Voltar 5 segundos",
+    "forward5": "Avançar 5 segundos",
+    "clock": "Tempo atual e duração",
+    "playbackSpeed": "Velocidade de reprodução",
+    "zoom": "Zoom",
+    "volume": "Volume",
+    "cancelPending": "Cancelar início pendente",
+    "close": "Fechar",
+    "segmentName": "Nome do segmento {{n}}",
+    "segmentStart": "Início do segmento {{n}}",
+    "segmentEnd": "Fim do segmento {{n}}",
+    "playSegment": "Reproduzir segmento {{n}}",
+    "jumpToSegmentStart": "Ir para o início do segmento {{n}}",
+    "deleteSegment": "Excluir segmento {{n}}",
+    "exportFileName": "Nome do arquivo do segmento {{n}}",
+    "openSession": "Abrir {{name}}",
+    "pickSession": "Escolher arquivo para retomar {{name}}",
+    "deleteSession": "Excluir sessão de {{name}}"
+  }
+}

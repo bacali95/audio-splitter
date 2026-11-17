@@ -5,6 +5,7 @@ import '@ui-sdk/core/web.css'
 import './styles/tokens.css'
 import './styles/ui.css'
 import './styles/app.css'
+import './i18n'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(

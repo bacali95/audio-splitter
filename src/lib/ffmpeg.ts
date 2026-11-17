@@ -3,6 +3,7 @@ import { toBlobURL } from '@ffmpeg/util'
 // Self-hosted single-thread core (bundled by Vite, no CDN at runtime).
 import coreURL from '@ffmpeg/core?url'
 import wasmURL from '@ffmpeg/core/wasm?url'
+import { AppError } from './errors'
 import { splitExt } from './names'
 
 export const PEAKS_PER_SEC = 50
@@ -91,7 +92,7 @@ async function run(ff: FFmpeg, args: string[]): Promise<void> {
   lastLog = []
   const code = await ff.exec(args)
   if (code !== 0) {
-    throw new Error(`ffmpeg exited with code ${code}: ${lastLog.slice(-4).join(' | ')}`)
+    throw new AppError('ffmpegExit', { code, log: lastLog.slice(-4).join(' | ') })
   }
 }
 
