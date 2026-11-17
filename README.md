@@ -7,11 +7,11 @@ Browser-only tool to split one long audio file (hours, hundreds of MB) into name
 ## Run
 
 ```bash
-npm install
-npm run dev        # http://localhost:5173
-npm run build      # type-check + production build into dist/
-npx tsc --noEmit   # type-check only
-npx vitest run     # unit tests (time, names, colours, formatting, locale files)
+bun install          # requires Bun ≥ 1.4 (https://bun.sh); Node.js is not needed
+bun run dev         # http://localhost:5173
+bun run build       # type-check + production build into dist/
+bun run typecheck   # type-check only
+bun run test        # unit tests (time, names, colours, formatting, locale files)
 ```
 
 ## How it works
@@ -84,7 +84,7 @@ Placeholders are `{{name}}`. Plurals use i18next suffixes: `key_one` / `key_othe
 2. Copy `src/i18n/locales/en.json` to `src/i18n/locales/<code>.json` and translate the values (keep keys, `{{vars}}` and tags).
 3. Add the plural forms the language needs (`new Intl.PluralRules('<code>').resolvedOptions().pluralCategories`).
 4. If it is right-to-left set `dir: 'rtl'`. Layout is mirrored with CSS logical properties; waveform, timeline, time inputs and timecodes stay LTR on purpose.
-5. Run `npx vitest run src/i18n`: `locales.test.ts` checks every key and plural form exists, that no value is empty and that all `{{vars}}`/tags survive. `I18N_REPORT=1 npx vitest run src/i18n/locales.test.ts` also lists still-untranslated keys per locale (a file that is still an exact copy of `en.json` is allowed to lack extra plural forms).
+5. Run `bun run test src/i18n`: `locales.test.ts` checks every key and plural form exists, that no value is empty and that all `{{vars}}`/tags survive. `I18N_REPORT=1 bun run test src/i18n/locales.test.ts` also lists still-untranslated keys per locale (a file that is still an exact copy of `en.json` is allowed to lack extra plural forms).
 
 ### RTL
 
